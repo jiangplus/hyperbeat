@@ -1,0 +1,38 @@
+{
+  "name": "hyperbeat",
+  "version": "0.1.0",
+  "description": "cli tool to create and manage hyperdrive",
+  "main": "bin.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": "./bin.js",
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@corestore/networker": "^1.0.4",
+    "@hyperspace/client": "^1.14.2",
+    "cac": "^6.6.1",
+    "corestore": "^5.8.1",
+    "debug": "2.6.9",
+    "depd": "~1.1.2",
+    "destroy": "~1.0.4",
+    "encodeurl": "~1.0.2",
+    "escape-html": "~1.0.3",
+    "etag": "~1.8.1",
+    "express": "^4.17.1",
+    "finalhandler": "^1.1.2",
+    "fresh": "0.5.2",
+    "glob": "^7.1.6",
+    "http-errors": "~1.7.2",
+    "hyperdrive": "^10.18.0",
+    "mime": "1.6.0",
+    "ms": "2.1.1",
+    "on-finished": "~2.3.0",
+    "parseurl": "~1.3.3",
+    "random-access-memory": "^3.1.1",
+    "range-parser": "~1.2.1",
+    "statuses": "~1.5.0"
+  }
+}

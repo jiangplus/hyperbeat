@@ -40,6 +40,7 @@ cli.command('init', 'init current dir as hyperdrive').action(async (files, optio
       type: 'hyperdrive'
     }
     fs.writeFileSync('dat.json', JSON.stringify(data, null, 2))
+    console.log('The current directory is initialized as a hyperdrive!')
 
     drive.close(() => {
       process.exit()
@@ -105,6 +106,11 @@ cli.command('ls', 'init dir as hyperdrive')
     process.exit()
   }
 
+  if (!options.path) {
+    console.log('--path <path> is required')
+    process.exit()
+  }
+
   let datjson = fs.readFileSync('dat.json')
   let json = JSON.parse(datjson)
   let key = json.key
@@ -137,6 +143,11 @@ cli.command('cat', 'cat file content from hyperdrive')
     process.exit()
   }
 
+  if (!options.path) {
+    console.log('--path <path> is required')
+    process.exit()
+  }
+
   let datjson = fs.readFileSync('dat.json')
   let json = JSON.parse(datjson)
   let key = json.key
@@ -148,9 +159,6 @@ cli.command('cat', 'cat file content from hyperdrive')
   const drive = hyperdrive(store, key)
 
   drive.on('ready', async function () {
-    console.log('key: ', drive.key.toString('hex'))
-    console.log('discoverykey: ', drive.discoveryKey.toString('hex'))
-    
     drive.readFile(path, 'utf-8', (err, data) => {
       console.log(data)
 
@@ -164,8 +172,12 @@ cli.command('cat', 'cat file content from hyperdrive')
 cli.command('pin', 'pin hyperdrive to local hyperspace')
   .option('--key <key>', 'hyperdrive key')
   .action(async (options) => {
-  console.log(options)
   let key = options.key
+
+  if (!options.key) {
+    console.log('--key <key> is required')
+    process.exit()
+  }
 
   const client = new HyperspaceClient()
   const store = client.corestore()
@@ -187,11 +199,21 @@ cli.command('pin', 'pin hyperdrive to local hyperspace')
 
 cli.command('share', 'share hyperdrive and serve as http')
   .option('--port <port>', 'http port, default to 3030')
-  .option('--key <key>', 'hyperdrive key')
+  .option('--key <key>', 'hyperdrive key for the drive to share, use local dat.json if <key> is not provided')
   .action(async (options) => {
-  console.log(options)
   let key = options.key
   let port = options.port || 3030
+
+  if (!key) {
+    try {
+      let datjson = fs.readFileSync('dat.json')
+      let json = JSON.parse(datjson)
+      key = json.key
+    } catch(err) {
+        console.log('cannot read dat.json or retrive --key <key>')
+        process.exit()
+    }
+  }
 
   const client = new HyperspaceClient()
   const store = client.corestore()
@@ -208,7 +230,7 @@ cli.command('share', 'share hyperdrive and serve as http')
     app.use(serveStatic(path.join(__dirname, 'public')))
     app.use(serveStatic('/', {fs: drive}))
     app.listen(port, () => {
-      console.log('listening...', port)
+      console.log(`listening... please open http://localhost:${port} in the browser`)
     })
 
     await networker.configure(drive.discoveryKey, { announce: true, lookup: true })
